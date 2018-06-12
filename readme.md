@@ -94,6 +94,30 @@ birthday is on October the 11th. This is a distinct type in some languages such
 as Elixir. I consider the lack of a distinct type for this concept in the
 Javascript standard one downside of the language.
 
+## Custom Validators
+
+This package is 100% extensible via the `ValidationError` type. In fact, every
+time you use `compose` to build up a complicated validator, you are writing a
+custom validator! It is very simple if you need to write a validator beyond what
+this library provides. Simply create a function which takes a value, validates
+it, and returns that value. If the value does not validate, all you have to do
+is throw a `ValidationError` and call `fieldValue` with the value you were
+passed! For example:
+
+```js
+class Thingy {}
+
+const validateIsThingy = value => {
+  if (value instanceof Thingy) {
+    return value;
+  } else {
+    throw new ValidationError("is not a valid thingy").fieldValue(value);
+  }
+};
+```
+
+This can be used alongside all the methods in this library.
+
 ## API Documentation
 
 `require("@cjhowe7/validation")` returns a bunch of functions, which are
