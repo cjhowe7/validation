@@ -1,7 +1,7 @@
 {
   "name": "@cjhowe7/validation",
   "version": "0.1.0",
-  "description": "Functional validation library",
+  "description": "Isomorphic validation using function composition",
   "main": "index.js",
   "repository": "https://github.com/cjhowe7/validation",
   "author": "Christian Howe",
