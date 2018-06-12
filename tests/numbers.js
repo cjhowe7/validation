@@ -18,6 +18,7 @@ describe("Int", () => {
   describe("good inputs pass validation", () => {
     const testValidInt = utils.makeValidTester(validation.int);
 
+    testValidInt("actual integer type", 10, 10);
     testValidInt("small integer", "1", 1);
     testValidInt("big integer", "909180130", 909180130);
     testValidInt("floating point truncates", "123.214", 123);
@@ -100,6 +101,7 @@ describe("Float", () => {
   describe("good inputs pass validation", () => {
     const testValidFloat = utils.makeValidTester(validation.float);
 
+    testValidFloat("actual float type", 10.01, 10.01);
     testValidFloat("small integer", "1", 1.0);
     testValidFloat("big integer", "909180130", 909180130.0);
     testValidFloat("small decimal", "1.0112", 1.0112);

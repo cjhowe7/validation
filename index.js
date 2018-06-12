@@ -29,21 +29,30 @@ class ValidationError extends Error {
 
 exports.ValidationError = ValidationError;
 
-exports.date = dateString => {
-  const dateTime = DateTime.fromISO(dateString, {
-    setZone: true
-  });
+exports.date = value => {
+  // only parse the value if it's not already a date object
+  const dateTime =
+    value instanceof Date
+      ? DateTime.fromJSDate(value)
+      : DateTime.fromISO(value, {
+          setZone: true
+        });
 
   if (dateTime.invalidReason != null) {
     throw new ValidationError(
       `is not a valid date: ${dateTime.invalidReason}`
-    ).fieldValue(dateString);
+    ).fieldValue(value);
   } else {
     return dateTime.toFormat("yyyy-MM-dd");
   }
 };
 
 exports.timestamp = timestampString => {
+  // pass through the timestamp if it's already a Date object
+  if (timestampString instanceof Date) {
+    return timestampString;
+  }
+
   const dateTime = DateTime.fromISO(timestampString, {
     setZone: true
   });
@@ -94,37 +103,10 @@ exports.max = (max, message = "is too large") => value => {
 };
 
 // inclusive
-exports.range = (min, max) => {
-  const message = `is not between ${min} and ${max}`;
-  return R.compose(
+exports.range = (min, max, message = `is not between ${min} and ${max}`) =>
+  R.compose(
     exports.max(max, message),
     exports.min(min, message)
-  );
-};
-
-// inclusive
-exports.minLength = minLength => value => {
-  if (minLength > value.length) {
-    throw new ValidationError("is too short").fieldValue(value);
-  } else {
-    return value;
-  }
-};
-
-// inclusive
-exports.maxLength = maxLength => value => {
-  if (value.length > maxLength) {
-    throw new ValidationError("is too long").fieldValue(value);
-  } else {
-    return value;
-  }
-};
-
-// inclusive
-exports.lengthRange = (min, max) =>
-  R.compose(
-    exports.maxLength(max),
-    exports.minLength(min)
   );
 
 exports.string = value => {
@@ -134,6 +116,31 @@ exports.string = value => {
     return value;
   }
 };
+
+// inclusive
+exports.minLength = (minLength, message = "is too short") => value => {
+  if (minLength > value.length) {
+    throw new ValidationError(message).fieldValue(value);
+  } else {
+    return value;
+  }
+};
+
+// inclusive
+exports.maxLength = (maxLength, message = "is too long") => value => {
+  if (value.length > maxLength) {
+    throw new ValidationError(message).fieldValue(value);
+  } else {
+    return value;
+  }
+};
+
+// inclusive
+exports.lengthRange = (min, max, message) =>
+  R.compose(
+    exports.maxLength(max, message),
+    exports.minLength(min, message)
+  );
 
 exports.notBlank = string => {
   if (string.trim() === "") {

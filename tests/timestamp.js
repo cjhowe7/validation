@@ -24,6 +24,9 @@ describe("Timestamp", () => {
       date => date.getTime()
     );
 
+    const dateValue = new Date(2018, 12, 21, 12, 0, 0);
+    testValidTimestamp("actual timestamp value", dateValue, dateValue);
+
     testValidTimestamp(
       "timestamp without time",
       "2018-01-01",

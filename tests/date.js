@@ -21,6 +21,7 @@ describe("Date", () => {
   describe("good inputs pass validation", () => {
     const testValidDate = utils.makeValidTester(validation.date);
 
+    testValidDate("actual date value", new Date(2018, 11, 21), "2018-12-21");
     testValidDate(
       "valid date with leap year day in february",
       "2016-02-29",
