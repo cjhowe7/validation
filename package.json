@@ -1,0 +1,14 @@
+{
+  "name": "@cjhowe7/validation",
+  "version": "0.1.0",
+  "description": "Functional validation library",
+  "main": "index.js",
+  "repository": "https://github.com/cjhowe7/validation",
+  "author": "Christian Howe",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "isemail": "^3.1.2",
+    "luxon": "^1.2.1",
+    "ramda": "^0.25.0"
+  }
+}
