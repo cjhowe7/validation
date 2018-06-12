@@ -1,6 +1,7 @@
 # Functional validation
 
 [![CircleCI](https://circleci.com/gh/cjhowe7/validation/tree/master.svg?style=svg)](https://circleci.com/gh/cjhowe7/validation/tree/master)
+[![codecov](https://codecov.io/gh/cjhowe7/validation/branch/master/graph/badge.svg)](https://codecov.io/gh/cjhowe7/validation)
 
 > Isomorphic validation using function composition
 
