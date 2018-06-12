@@ -2,6 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/cjhowe7/validation/tree/master.svg?style=svg)](https://circleci.com/gh/cjhowe7/validation/tree/master)
 [![codecov](https://codecov.io/gh/cjhowe7/validation/branch/master/graph/badge.svg)](https://codecov.io/gh/cjhowe7/validation)
+[![npm version](https://badge.fury.io/js/%40cjhowe7%2Fvalidation.svg)](https://badge.fury.io/js/%40cjhowe7%2Fvalidation)
 
 > Legit isomorphic validation using function composition
 
