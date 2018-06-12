@@ -76,29 +76,31 @@ exports.float = string => {
 };
 
 // inclusive
-exports.min = min => value => {
+exports.min = (min, message = "is too small") => value => {
   if (min > value) {
-    throw new ValidationError("is too small").fieldValue(value);
+    throw new ValidationError(message).fieldValue(value);
   } else {
     return value;
   }
 };
 
 // inclusive
-exports.max = max => value => {
+exports.max = (max, message = "is too large") => value => {
   if (value > max) {
-    throw new ValidationError("is too large").fieldValue(value);
+    throw new ValidationError(message).fieldValue(value);
   } else {
     return value;
   }
 };
 
 // inclusive
-exports.range = (min, max) =>
-  R.compose(
-    exports.max(max),
-    exports.min(min)
+exports.range = (min, max) => {
+  const message = `is not between ${min} and ${max}`;
+  return R.compose(
+    exports.max(max, message),
+    exports.min(min, message)
   );
+};
 
 // inclusive
 exports.minLength = minLength => value => {

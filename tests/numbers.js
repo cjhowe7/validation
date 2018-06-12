@@ -65,6 +65,25 @@ describe("Int", () => {
       1111111111
     );
   });
+
+  describe("range constraint", () => {
+    const intBetween10And20 = validation.compose(
+      validation.range(10, 20),
+      validation.int
+    );
+    const testIntBetween10And20 = utils.makeValidTester(intBetween10And20);
+    const testIntNotBetween10And20 = utils.makeInvalidTester(
+      intBetween10And20,
+      /is not between 10 and 20/
+    );
+
+    testIntBetween10And20("15 is between 10 and 20", "15", 15);
+    testIntBetween10And20("10 is between 10 and 20", "10", 10);
+    testIntBetween10And20("20 is between 10 and 20", "20", 20);
+
+    testIntNotBetween10And20("21 is not between 10 and 20", "21", 21);
+    testIntNotBetween10And20("9 is not between 10 and 20", "9", 9);
+  });
 });
 
 describe("Float", () => {
