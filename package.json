@@ -13,21 +13,18 @@
   },
   "scripts": {
     "test": "mocha tests/**/*.js",
-    "coverage": "nyc yarn test"
+    "coverage": "nyc yarn test",
+    "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "codecov": "^3.0.2",
     "mocha": "^5.2.0",
     "nyc": "^12.0.2"
   },
   "nyc": {
     "exclude": [
       "tests/**/*.js"
-    ],
-    "check-coverage": true,
-    "lines": 90,
-    "statements": 90,
-    "functions": 90,
-    "branches": 90
+    ]
   }
 }
