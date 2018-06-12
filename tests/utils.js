@@ -1,13 +1,17 @@
 const expect = require("chai").expect;
 const validation = require("..");
 
-exports.makeInvalidTester = (validationFn, errRegex) => (message, value) => {
+exports.makeInvalidTester = (validationFn, errRegex) => (
+  message,
+  value,
+  errValue = null
+) => {
   it(message, () => {
     const validationError = expect(() => validationFn(value)).to.throw(
       validation.ValidationError,
       errRegex
     );
-    validationError.has.property("value", value);
+    validationError.has.property("value", errValue || value);
     validationError.has.property("name", "ValidationError");
   });
 };
