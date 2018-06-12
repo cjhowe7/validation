@@ -8,6 +8,7 @@ describe("Timestamp", () => {
       /is not a valid timestamp/
     );
 
+    testInvalidTimestamp("integer type", 12);
     testInvalidTimestamp("obviously bad timestamp", "failing");
     testInvalidTimestamp("bad time value", "2018-01-01T00:00:124Z");
     testInvalidTimestamp(

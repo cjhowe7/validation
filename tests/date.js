@@ -8,6 +8,7 @@ describe("Date", () => {
       /is not a valid date/
     );
 
+    testInvalidDate("integer type", 12);
     testInvalidDate("obviously invalid date", "obvious-failure");
     testInvalidDate("invalid date not in ISO 8601", "01 Jan 1971");
     testInvalidDate("invalid date in wrong order", "12-22-2018");

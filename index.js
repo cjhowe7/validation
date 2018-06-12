@@ -9,6 +9,8 @@ class ValidationError extends Error {
   constructor(message) {
     super(message);
     this.name = this.constructor.name;
+
+    // add the stack to the error on both browsers and node
     if (typeof Error.captureStackTrace === "function") {
       Error.captureStackTrace(this, this.constructor);
     } else {
@@ -30,6 +32,11 @@ class ValidationError extends Error {
 exports.ValidationError = ValidationError;
 
 exports.date = value => {
+  // reject values that aren't strings or dates
+  if (typeof value !== "string" && !(value instanceof Date)) {
+    throw new ValidationError("is not a valid date").fieldValue(value);
+  }
+
   // only parse the value if it's not already a date object
   const dateTime =
     value instanceof Date
@@ -51,6 +58,13 @@ exports.timestamp = timestampString => {
   // pass through the timestamp if it's already a Date object
   if (timestampString instanceof Date) {
     return timestampString;
+  }
+
+  // reject values that aren't strings
+  if (typeof timestampString !== "string") {
+    throw new ValidationError("is not a valid timestamp").fieldValue(
+      timestampString
+    );
   }
 
   const dateTime = DateTime.fromISO(timestampString, {
