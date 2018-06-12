@@ -94,7 +94,11 @@ exports.max = max => value => {
 };
 
 // inclusive
-exports.range = (min, max) => R.compose(exports.max(max), exports.min(min));
+exports.range = (min, max) =>
+  R.compose(
+    exports.max(max),
+    exports.min(min)
+  );
 
 // inclusive
 exports.minLength = minLength => value => {
@@ -116,7 +120,10 @@ exports.maxLength = maxLength => value => {
 
 // inclusive
 exports.lengthRange = (min, max) =>
-  R.compose(exports.maxLength(max), exports.minLength(min));
+  R.compose(
+    exports.maxLength(max),
+    exports.minLength(min)
+  );
 
 exports.string = value => {
   if (typeof value !== "string") {
