@@ -11,6 +11,9 @@ This is a package for validating input in requests using functional composition.
 It runs in both browsers and Node.js, and is well-suited for sharing validations
 between both of these environments.
 
+Since this library is highly dependent upon it, you're going to want to be very
+proficient with the [compose](https://ramdajs.com/docs/#compose) function.
+
 Install it with `yarn add @cjhowe7/validation` or, if you use npm, with
 `npm i --save @cjhowe7/validation`.
 
