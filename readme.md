@@ -85,13 +85,13 @@ This library makes the conceptual distinction between a date and a timestamp,
 which is one of its primary features. They each refer to a different concept,
 **entirely distinct from the Javascript `Date` type**.
 
-A timestamp refers to a _specific point of time_, and takes into account its
+A timestamp refers to a **specific point of time**, and takes into account its
 timezone. You should use this for things like "the time of the meeting" or "the
 time at which Jon posted this comment". This is usually what you would use the
 Javascript `Date` type for.
 
-A date refers to a _calendar day_, like Harry's first birthday or Christmas Day
-in 2018. These do **not** take into account the time nor the time zone of the
+A date refers to a **calendar day**, like Harry's first birthday or Christmas
+Day in 2018. This does _not_ take into account the time nor the time zone of the
 date. If I live in Singapore, and at midnight I say "my birthday is October
 10th, 1993", then I don't expect someone in Germany to think that I mean my
 birthday is on October the 11th. This is a distinct type in some languages such
