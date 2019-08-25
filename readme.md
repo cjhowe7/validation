@@ -1,10 +1,8 @@
-# `@cjhowe7/validation`
+# `@cjoftheweb/validation`
 
-[![CircleCI](https://circleci.com/gh/cjhowe7/validation/tree/master.svg?style=svg)](https://circleci.com/gh/cjhowe7/validation/tree/master)
-[![codecov](https://codecov.io/gh/cjhowe7/validation/branch/master/graph/badge.svg)](https://codecov.io/gh/cjhowe7/validation)
-[![npm version](https://badge.fury.io/js/%40cjhowe7%2Fvalidation.svg)](https://badge.fury.io/js/%40cjhowe7%2Fvalidation)
+[![npm version](https://badge.fury.io/js/%40cjoftheweb%2Fvalidation.svg)](https://badge.fury.io/js/%40cjoftheweb%2Fvalidation)
 
-> Legit isomorphic validation using function composition
+> Isomorphic validation using function composition
 
 ## Introduction
 
@@ -15,14 +13,14 @@ between both of these environments.
 Since this library is highly dependent upon it, you're going to want to be very
 proficient with the [compose](https://ramdajs.com/docs/#compose) function.
 
-Install it with `yarn add @cjhowe7/validation` or, if you use npm, with
-`npm i --save @cjhowe7/validation`.
+Install it with `yarn add @cjoftheweb/validation` or, if you use npm, with
+`npm i --save @cjoftheweb/validation`.
 
 ## Example
 
 ```js
 const assert = require("assert");
-const validation = require("@cjhowe7/validation");
+const validation = require("@cjoftheweb/validation");
 
 const validateMyObject = validation.compose(
   // validates the fields of the object
@@ -61,7 +59,7 @@ const validateMyObject = validation.compose(
 // validating a good value returns the converted value
 const me = validateMyObject({
   name: "Christian Howe",
-  email: "cjhowe7@pm.me",
+  email: "me@cjoftheweb.me",
   age: "24"
 });
 
@@ -124,7 +122,7 @@ This can be used alongside all the methods in this library.
 
 ## API Documentation
 
-`require("@cjhowe7/validation")` returns a bunch of functions, which are
+`require("@cjoftheweb/validation")` returns a bunch of functions, which are
 documented here, along with the `ValidationError` type.
 
 - `ValidationError` is a type that is thrown when a validation fails. It has a

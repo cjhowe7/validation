@@ -17,6 +17,8 @@ describe("Date", () => {
     testInvalidDate("invalid date with invalid month", "2018-13-01");
     testInvalidDate("invalid date with invalid day for month", "2018-02-29");
     testInvalidDate("invalid date with very large year", "10000000-01-01");
+    testInvalidDate("invalid date with zero day", "2018-01-00");
+    testInvalidDate("invalid date with zero month", "2018-00-01");
   });
 
   describe("good inputs pass validation", () => {
@@ -57,16 +59,6 @@ describe("Date", () => {
       "correct date with fractional seconds",
       "1885-04-30T00:00:00.000Z",
       "1885-04-30"
-    );
-    testValidDate(
-      "date with zero day rounds to first day",
-      "2018-01-00",
-      "2018-01-01"
-    );
-    testValidDate(
-      "date with zero month rounds to January",
-      "2018-00-01",
-      "2018-01-01"
     );
     testValidDate("date with small year", "0093-01-01", "0093-01-01");
     testValidDate("date with large year", "9999-01-01", "9999-01-01");

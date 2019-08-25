@@ -1,15 +1,15 @@
 {
-  "name": "@cjhowe7/validation",
+  "name": "@cjoftheweb/validation",
   "version": "0.1.1",
   "description": "Isomorphic validation using function composition",
   "main": "index.js",
-  "repository": "https://github.com/cjhowe7/validation",
+  "repository": "https://github.com/cjoftheweb/validation",
   "author": "Christian Howe",
   "license": "Apache-2.0",
   "dependencies": {
-    "isemail": "^3.1.2",
-    "luxon": "^1.2.1",
-    "ramda": "^0.25.0"
+    "isemail": "^3.2.0",
+    "luxon": "^1.17.2",
+    "ramda": "^0.26.1"
   },
   "scripts": {
     "test": "mocha tests/**/*.js",
@@ -17,14 +17,19 @@
     "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "codecov": "^3.0.2",
-    "mocha": "^5.2.0",
-    "nyc": "^12.0.2"
+    "chai": "^4.2.0",
+    "codecov": "^3.5.0",
+    "mocha": "^6.2.0",
+    "nyc": "^14.1.1"
   },
   "nyc": {
     "exclude": [
       "tests/**/*.js"
-    ]
+    ],
+    "check-coverage": true,
+    "branches": 95,
+    "lines": 95,
+    "functions": 95,
+    "statements": 95
   }
 }
