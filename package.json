@@ -1,6 +1,6 @@
 {
   "name": "@cjoftheweb/validation",
-  "version": "0.1.2",
+  "version": "0.2.0-alpha.0",
   "description": "Isomorphic validation using function composition",
   "main": "index.js",
   "repository": "https://github.com/cjoftheweb/validation",
@@ -12,24 +12,10 @@
     "ramda": "^0.26.1"
   },
   "scripts": {
-    "test": "mocha tests/**/*.js",
-    "coverage": "nyc yarn test",
-    "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "test": "echo Tests are a work in progress; exit 1"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "codecov": "^3.5.0",
-    "mocha": "^6.2.0",
-    "nyc": "^14.1.1"
-  },
-  "nyc": {
-    "exclude": [
-      "tests/**/*.js"
-    ],
-    "check-coverage": true,
-    "branches": 95,
-    "lines": 95,
-    "functions": 95,
-    "statements": 95
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5"
   }
 }

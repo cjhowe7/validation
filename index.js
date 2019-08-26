@@ -1,223 +1,174 @@
-const { validate: isemail } = require("isemail");
-const { DateTime } = require("luxon");
-const R = require("ramda");
+import { validate as isemail } from "isemail";
+import { DateTime } from "luxon";
+import {
+  always,
+  assoc,
+  both,
+  complement,
+  compose,
+  curry,
+  either,
+  equals,
+  flip,
+  gte,
+  ifElse,
+  invoker,
+  is,
+  isEmpty,
+  isNil,
+  length,
+  lensProp,
+  lte,
+  over,
+  prop,
+  reduce,
+  toPairs,
+  trim,
+  type,
+  unary
+} from "ramda";
+import { flatMapSuccess, mapError, mapSuccess } from "./result";
 
-// re-export compose, since you *need* it to use this library
-exports.compose = R.compose;
+export const validIf = curry((fn, message, result) =>
+  flatMapSuccess(ifElse(fn, success, always(error({ message }))), result)
+);
 
-class ValidationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = this.constructor.name;
+export const transformValue = mapSuccess;
 
-    // add the stack to the error on both browsers and node
-    if (typeof Error.captureStackTrace === "function") {
-      Error.captureStackTrace(this, this.constructor);
-    } else {
-      this.stack = new Error(message).stack;
-    }
-  }
+export const replaceErrorMessage = curry((message, result) =>
+  mapError(assoc("message", message), result)
+);
 
-  fieldName(field) {
-    this.field = field;
-    return this;
-  }
+const dateTimeFromISO = curry(flip(DateTime.fromISO));
+const dateTimeFromJS = unary(DateTime.fromJSDate);
+const formatDateTime = invoker(1, "toFormat");
+const dateTimeToJS = invoker(0, "toJSDate");
 
-  fieldValue(value) {
-    this.value = value;
-    return this;
-  }
-}
+const validIfDateTime = validIf(
+  compose(
+    isNil,
+    prop("invalidReason")
+  )
+);
 
-exports.ValidationError = ValidationError;
+const validIfDateTimeType = validIf(either(is(Date), is(String)));
 
-exports.date = value => {
-  // reject values that aren't strings or dates
-  if (typeof value !== "string" && !(value instanceof Date)) {
-    throw new ValidationError("is not a valid date").fieldValue(value);
-  }
+const toDateTime = transformValue(
+  ifElse(is(Date), dateTimeFromJS, dateTimeFromISO({ setZone: true }))
+);
 
-  // only parse the value if it's not already a date object
-  const dateTime =
-    value instanceof Date
-      ? DateTime.fromJSDate(value)
-      : DateTime.fromISO(value, {
-          setZone: true
-        });
+export const date = compose(
+  transformValue(formatDateTime("yyyy-MM-dd")),
+  validIfDateTime("must be a valid date"),
+  toDateTime,
+  validIfDateTimeType("must be a valid date type")
+);
 
-  if (dateTime.invalidReason != null) {
-    throw new ValidationError(
-      `is not a valid date: ${dateTime.invalidReason}`
-    ).fieldValue(value);
-  } else {
-    return dateTime.toFormat("yyyy-MM-dd");
-  }
-};
+export const timestamp = compose(
+  dateTimeToJS,
+  validIfDateTime("must be a valid timestamp"),
+  toDateTime,
+  validIfDateTimeType("must be a valid timestamp type")
+);
 
-exports.timestamp = timestampString => {
-  // pass through the timestamp if it's already a Date object
-  if (timestampString instanceof Date) {
-    return timestampString;
-  }
+const validIfNotNaN = validIf(complement(isNaN));
 
-  // reject values that aren't strings
-  if (typeof timestampString !== "string") {
-    throw new ValidationError("is not a valid timestamp").fieldValue(
-      timestampString
-    );
-  }
+export const int = compose(
+  validIfNotNaN("must be a valid integer"),
+  curry(flip(parseInt))(10)
+);
 
-  const dateTime = DateTime.fromISO(timestampString, {
-    setZone: true
-  });
+export const float = compose(
+  validIfNotNaN("must be a valid decimal"),
+  parseFloat
+);
 
-  if (dateTime.invalidReason != null) {
-    throw new ValidationError(
-      `is not a valid timestamp: ${dateTime.invalidReason}`
-    ).fieldValue(timestampString);
-  } else {
-    return dateTime.toJSDate();
-  }
-};
+export const min = curry((minValue, result) =>
+  validIf(gte(minValue), `must be at least ${minValue}`, result)
+);
 
-exports.int = string => {
-  const value = parseInt(string, 10);
-  if (isNaN(value)) {
-    throw new ValidationError("is not a valid integer").fieldValue(string);
-  } else {
-    return value;
-  }
-};
+export const max = curry((maxValue, result) =>
+  validIf(lte(maxValue), `must be at most ${maxValue}`, result)
+);
 
-exports.float = string => {
-  const value = parseFloat(string);
-  if (isNaN(value)) {
-    throw new ValidationError("is not a valid decimal").fieldValue(string);
-  } else {
-    return value;
-  }
-};
+export const range = curry((minValue, maxValue, result) =>
+  validIf(
+    both(gte(minValue), lte(maxValue)),
+    `must be between ${minValue} and ${maxValue}`,
+    result
+  )
+);
 
-// inclusive
-exports.min = (min, message = "is too small") => value => {
-  if (min > value) {
-    throw new ValidationError(message).fieldValue(value);
-  } else {
-    return value;
-  }
-};
+export const string = validIf(is(String), "must be a string");
 
-// inclusive
-exports.max = (max, message = "is too large") => value => {
-  if (value > max) {
-    throw new ValidationError(message).fieldValue(value);
-  } else {
-    return value;
-  }
-};
+export const minLength = curry((minLength, result) =>
+  validIf(
+    compose(
+      gte(minLength),
+      length
+    ),
+    `must be at least length ${minLength}`,
+    result
+  )
+);
 
-// inclusive
-exports.range = (min, max, message = `is not between ${min} and ${max}`) =>
-  R.compose(
-    exports.max(max, message),
-    exports.min(min, message)
-  );
+export const maxLength = curry((maxLength, result) =>
+  validIf(
+    compose(
+      lte(maxLength),
+      length
+    ),
+    `must be at most length ${maxLength}`,
+    result
+  )
+);
 
-exports.string = value => {
-  if (typeof value !== "string") {
-    throw new ValidationError("is not a string").fieldValue(value);
-  } else {
-    return value;
-  }
-};
+export const lengthRange = curry((minLength, maxLength, result) =>
+  validIf(
+    compose(
+      both(gte(minLength), lte(maxLength)),
+      length
+    ),
+    `must be at least length ${minLength} and at most length ${maxLength}`,
+    result
+  )
+);
 
-// inclusive
-exports.minLength = (minLength, message = "is too short") => value => {
-  if (minLength > value.length) {
-    throw new ValidationError(message).fieldValue(value);
-  } else {
-    return value;
-  }
-};
+export const notBlank = validIf(
+  compose(
+    complement(isEmpty),
+    trim
+  ),
+  "must not be blank"
+);
 
-// inclusive
-exports.maxLength = (maxLength, message = "is too long") => value => {
-  if (value.length > maxLength) {
-    throw new ValidationError(message).fieldValue(value);
-  } else {
-    return value;
-  }
-};
+export const trim = transformValue(trim);
 
-// inclusive
-exports.lengthRange = (min, max, message) =>
-  R.compose(
-    exports.maxLength(max, message),
-    exports.minLength(min, message)
-  );
+export const email = validIf(isemail, "must be a valid email");
 
-exports.notBlank = string => {
-  if (string.trim() === "") {
-    throw new ValidationError("is blank").fieldValue(string);
-  } else {
-    return string;
-  }
-};
+export const object = validIf(
+  compose(
+    equals("Object"),
+    type
+  )
+);
 
-exports.trim = string => string.trim();
+export const required = validIf(complement(isNil), "must be provided");
 
-exports.email = string => {
-  if (!isemail(string)) {
-    throw new ValidationError("is not a valid email").fieldValue(string);
-  } else {
-    return string;
-  }
-};
-
-exports.object = value => {
-  if (typeof value !== "object") {
-    throw new ValidationError("is not an object").fieldValue(value);
-  } else {
-    return value;
-  }
-};
-
-exports.required = value => {
-  if (value == null) {
-    throw new ValidationError("is required").fieldValue(value);
-  } else {
-    return value;
-  }
-};
-
-exports.fields = (
-  requiredKeyValidations,
-  optionalKeyValidations = {}
-) => object =>
-  R.merge(
-    R.compose(
-      R.fromPairs,
-      R.map(([key, validate]) => {
-        try {
-          return [key, validate(object[key])];
-        } catch (err) {
-          err instanceof ValidationError && err.fieldName(key);
-          throw err;
-        }
-      }),
-      R.filter(([key]) => object[key] != null),
-      R.toPairs
-    )(optionalKeyValidations),
-    R.mapObjIndexed((validate, key) => {
-      if (object[key] == null) {
-        throw new ValidationError("is required").fieldName(key);
-      } else {
-        try {
-          return validate(object[key]);
-        } catch (err) {
-          err instanceof ValidationError && err.fieldName(key);
-          throw err;
-        }
-      }
-    }, requiredKeyValidations)
-  );
+export const fields = curry((keyValidations, object) =>
+  reduce(
+    (result, [key, validate]) =>
+      flatMapSuccess(
+        rootObject =>
+          compose(
+            mapError(over(lensProp("field"), append(key))),
+            mapSuccess(always(rootObject)),
+            validate,
+            prop(key)
+          )(rootObject),
+        result
+      ),
+    validationSuccess(object),
+    toPairs(keyValidations)
+  )
+);
