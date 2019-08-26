@@ -16,6 +16,13 @@ proficient with the [compose](https://ramdajs.com/docs/#compose) function.
 Install it with `yarn add @cjoftheweb/validation` or, if you use npm, with
 `npm i --save @cjoftheweb/validation`.
 
+## `@cjoftheweb/validation@next`
+
+A new version of this library is currently in development, which uses a result
+type instead of throwing exceptions. This makes it a lot easier to write custom
+validations in a functional style, which is a major limitation of the current
+version.
+
 ## Example
 
 ```js
