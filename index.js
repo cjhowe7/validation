@@ -21,7 +21,6 @@ import {
   lte,
   over,
   prop,
-  reduce,
   toPairs,
   trim,
   type,
@@ -155,19 +154,22 @@ export const object = validIf(
 
 export const required = validIf(complement(isNil), "must be provided");
 
+const addFieldNameToError = fieldName =>
+  over(lensProp("field"), append(fieldName));
+
+const validateField = ([key, validationFn]) =>
+  flatMapSuccess(rootObject =>
+    compose(
+      mapError(addFieldNameToError),
+      mapSuccess(always(rootObject)),
+      validationFn,
+      prop(key)
+    )(rootObject)
+  );
+
 export const fields = curry((keyValidations, object) =>
-  reduce(
-    (result, [key, validate]) =>
-      flatMapSuccess(
-        rootObject =>
-          compose(
-            mapError(over(lensProp("field"), append(key))),
-            mapSuccess(always(rootObject)),
-            validate,
-            prop(key)
-          )(rootObject),
-        result
-      ),
+  reduceRight(
+    uncurryN(2, validateField),
     validationSuccess(object),
     toPairs(keyValidations)
   )
